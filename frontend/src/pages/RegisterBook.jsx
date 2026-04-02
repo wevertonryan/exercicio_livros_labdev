@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { createBook } from '../api/api.jsx';
 
@@ -26,8 +26,8 @@ export default function RegisterBook(){
             titulo: titulo, 
             autor: autor, 
             isbn: isbn, 
-            anoPublicacao: anoPublicacao,
-            quantidadeEstoque: quantidadeEstoque
+            ano_publicacao: anoPublicacao,
+            quantidade_estoque: quantidadeEstoque
         }
 
         const json = JSON.stringify(obj)

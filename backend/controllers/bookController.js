@@ -12,7 +12,8 @@ export async function findBooks(req, res){
 }
 
 export async function getBookByID(req, res){
-    const bookID = req.params.id
+    const bookID = req.params.id;
+
     try {
         const book = await Book.findById(bookID)
         res.status(200).json({message: "Requisição executada com sucesso!", status: "sucess", result: book});
@@ -92,7 +93,6 @@ function _montagemDeMensagem(itensFaltantes){
 async function _isBookRegistered(isbn, quantidade_estoque){
     try{
         const bookRegistered = await Book.findOne({isbn: isbn});
-        console.log(bookRegistered);
         if(!bookRegistered){
             return false;
         }
@@ -155,8 +155,6 @@ export async function createBook(req, res){
 export async function updateBook(req, res){
     const {titulo, autor, isbn, ano_publicacao, quantidade_estoque} = req.body;
 
-    const bookID = req.params.id
-
     let updated = false;
     try {
         const book = await Book.findById(bookID);
@@ -180,7 +178,6 @@ export async function updateBook(req, res){
 
 export async function deleteBook(req, res){
     const bookID = req.params.id;
-
     try {
         const book = await Book.deleteOne({_id: bookID})
         res.status(200).json({message: "Livro deletado com sucesso!", status: "sucess", result: book});

@@ -1,7 +1,7 @@
 import axios from "axios";
 
 const api = axios.create({
-    baseURL: "http://localhost:5000/Biblioteca",
+    baseURL: "https://fictional-zebra-x5979qrrw4vxhwww-5000.app.github.dev/Biblioteca",
     headers: {
         "Content-Type":"Application/json"
     }
