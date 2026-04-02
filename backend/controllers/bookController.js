@@ -92,6 +92,7 @@ function _montagemDeMensagem(itensFaltantes){
 async function _isBookRegistered(isbn, quantidade_estoque){
     try{
         const bookRegistered = await Book.findOne({isbn: isbn});
+        console.log(bookRegistered);
         if(!bookRegistered){
             return false;
         }
@@ -102,7 +103,9 @@ async function _isBookRegistered(isbn, quantidade_estoque){
         }
 
         bookRegistered.save();
+        return true;
     } catch(error) {}
+    return false;
 }
 
 export async function createBook(req, res){
@@ -129,20 +132,10 @@ export async function createBook(req, res){
     if(isNaN(quantidade_estoque_valida)){
         quantidade_estoque_valida = 0;
     }
-    try{
-        const bookRegistered = await Book.findOne({isbn: isbn});
-        if(bookRegistered){
-            if(bookRegistered.quantidade_estoque){
-                bookRegistered.quantidade_estoque += quantidade_estoque_valida;
-            } else {
-                bookRegistered.quantidade_estoque = quantidade_estoque_valida;
-            }
-
-            bookRegistered.save();
-            
-            return;
-        }
-    } catch(error) {}
+    if(await _isBookRegistered(isbn, quantidade_estoque_valida)){
+        res.status(200).json({message: "Livro já está cadastrado, foi adicionado ao estoque", status: "sucess"});
+        return;
+    }
 
     const newBook = new Book({
         titulo,
