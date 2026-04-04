@@ -1,10 +1,11 @@
-import { Routes, Route } from 'react-router-dom'
+import { Routes, Route, useNavigate } from 'react-router-dom'
 import './App.css'
 import ListBooks from './pages/ListBooks.jsx'
 import RegisterBook from './pages/RegisterBook.jsx'
 import BookListCard from './components/bookListCard.jsx'
 
 function App() {
+  const navigate = useNavigate();
   return (
     <>
       <header>
@@ -12,8 +13,8 @@ function App() {
           Biblioteca
         </h1>
         <nav>
-          <li><a href="/">Home</a></li>
-          <li><a href="/new">Cadastrar Livro</a></li>
+          <li onClick={()=>{navigate("/")}}>Home</li>
+          <li onClick={()=>{navigate("/new")}}>Cadastrar Livro</li>
         </nav>
       </header>
       <main>

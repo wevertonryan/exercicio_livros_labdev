@@ -2,46 +2,5 @@
 @tailwind components;
 @tailwind utilities;
 
-li {
-    @apply list-none p-0 m-0;
-}
 
-body {
-    @apply bg-orange-50;
-}
 
-h1 {
-    @apply text-3xl font-extrabold;
-}
-
-h2 {
-    @apply text-xl font-bold;
-}
-
-h3 {
-    @apply text-lg;
-}
-
-h1, h2, h3, h4, h5, h6, p, a, button {
-    @apply text-yellow-900;
-}
-
-.little-text {
-    @apply font-light;
-}
-
-header {
-    @apply bg-yellow-900 flex items-center justify-between px-6 py-2;
-}
-header h1, header a {
-    @apply text-orange-50;
-}
-header > nav {
-    @apply flex items-center gap-5;
-}
-main {
-    @apply px-14 py-10;
-}
-button {
-    @apply bg-yellow-900 hover:bg-yellow-700 text-white font-bold py-2 px-4 rounded;
-}

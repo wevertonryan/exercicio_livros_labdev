@@ -9,6 +9,7 @@ app.use(express.json())
 app.use(cors(
     {credentials: true, origin: "https://fictional-zebra-x5979qrrw4vxhwww-5173.app.github.dev"}
 ))
+
 const ipsRequest = new Map();
 const timeout = 60000;
 const requestLimit = 30;
@@ -43,7 +44,6 @@ app.use((req, res, next) => {
         }
     }
     const result = IPRequest(ip);
-    console.log(result)
     if(!result.isAllowed){
         res.status(429).json({message: "Você fez muitas requisições! tente novamente mais tarde.", status: "failed"});
         return;
