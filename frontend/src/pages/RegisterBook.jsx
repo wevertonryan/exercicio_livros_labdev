@@ -2,23 +2,35 @@ import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { createBook } from '../api/api.jsx';
 import CookieQuery from '../api/cookieQuerys.js';
+import { toast } from 'react-toastify';
 
 export default function RegisterBook(){
-    const [titulo, setTitulo] = useState(null);
-    const [autor, setAutor] = useState(null);
-    const [isbn, setIsbn] = useState(null);
-    const [anoPublicacao, setAnoPublicacao] = useState(null);
-    const [quantidadeEstoque, setQuantidadeEstoque] = useState(null);
-    const [saving, setSaving] = useState(false);
+    const [titulo, setTitulo] = useState(undefined);
+    const [autor, setAutor] = useState(undefined);
+    const [isbn, setIsbn] = useState(undefined);
+    const [anoPublicacao, setAnoPublicacao] = useState(undefined);
+    const [quantidadeEstoque, setQuantidadeEstoque] = useState(undefined);
 
     const navigate = useNavigate();
     //const navigate:NavigateFunction = useNavigate();
 
+
+    const savingBook = (book) => new Promise((resolve, reject)=>{
+        createBook(book)
+        .then(()=>{
+            CookieQuery.upsertCookie("newBook", "true");
+            navigate(-1);
+            resolve();
+        })
+        .catch(() => reject())
+    });
+
     const handleSubmit = async (e)=>{
         e.preventDefault()
         
+        console.log(titulo)
         if(!titulo && !autor && !isbn){
-            alert("Titulo, Autor e ISBN são itens obrigatórios!");
+            toast.error("Titulo, Autor e ISBN são itens obrigatórios!");
             return;
         }
 
@@ -31,23 +43,17 @@ export default function RegisterBook(){
         }
 
         const json = JSON.stringify(obj)
-        setSaving(true);
-        try {
-            await createBook(json);
-            CookieQuery.upsertCookie("newDocument", "true");
-            navigate(-1);
-        } catch (error) {
-            console.log(error);
-        }
-        setSaving(false);
+        await toast.promise(savingBook(json),{
+            pending: 'Cadastrando Livro',
+            success: 'Livro Cadastrado com Sucesso!',
+            error: 'Falha ao Cadastrar Livro!'
+        })
         return;
     }
 
     return (
         <form className="flex flex-col gap-6 sm:px-10">
-        <div>
-            <h1 className="text-center sm:text-start">Cadastrar Livro</h1><p>{saving ? "Salvando" : ""}</p>
-        </div>
+        <h1 className="text-center sm:text-start">Cadastrar Livro</h1>
         <div className='grid grid-cols-6 w-full gap-3'>
             <div className="register-input col-span-6 sm:col-span-3">
                 <label htmlFor="titulo" >Titulo</label> 

@@ -4,9 +4,6 @@ import BookListCard from '../components/bookListCard.jsx';
 import { useQuery } from '@tanstack/react-query';
 import CookieQuery from '../api/cookieQuerys.js';
 
-
-
-
 export default function ListBooks(){
     const { data, isLoading, isError, error, refetch } = useQuery({
         queryKey: ['allBooksJson'],
@@ -19,10 +16,10 @@ export default function ListBooks(){
         refetchOnWindowFocus: false // Para de atualizar toda vez que você clica na aba do Chrome
     })
 
-    if(CookieQuery.getCookie("newDocument") == "true"){
-        console.log("Tem Documento novo");
+    if(CookieQuery.getCookie("newBook") == "true"){
+        console.log("Tem Livro novo");
         refetch();
-        CookieQuery.upsertCookie("newDocument", "false");
+        CookieQuery.upsertCookie("newBook", "false");
     } 
     
 
