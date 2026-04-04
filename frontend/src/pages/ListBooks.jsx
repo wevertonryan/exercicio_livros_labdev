@@ -39,6 +39,10 @@ export default function ListBooks(){
 
     return(
         <>
+            <div className='w-full flex gap-2 pb-8'>
+                <input className="leading-[inherit] grow" type="text" id="search" placeholder='Procurar Livros por Autor'/>
+                <button>Procurar</button>
+            </div>
             <div className='flex flex-wrap justify-between gap-4'>
                 <h1>Livros</h1>
                 <div className='flex gap-2 flex-wrap justify-end'>

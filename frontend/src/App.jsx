@@ -1,8 +1,8 @@
 import { Routes, Route, useNavigate } from 'react-router-dom'
 import './App.css'
 import ListBooks from './pages/ListBooks.jsx'
+import SearchBooks from './pages/SearchBooksByAutor.jsx'
 import RegisterBook from './pages/RegisterBook.jsx'
-import BookListCard from './components/bookListCard.jsx'
 
 function App() {
   const navigate = useNavigate();
@@ -21,6 +21,7 @@ function App() {
       <Routes>
           <Route path='/' element={<ListBooks />} />
           <Route path='/new' element={<RegisterBook />} />
+          <Route path='/search' element={<SearchBooks />} />
       </Routes>
       </main>
       <footer>
