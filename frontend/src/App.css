@@ -36,12 +36,16 @@ header > nav {
     @apply flex items-center gap-5;
 }
 main {
-    @apply px-14 py-10;
+    @apply px-[10vw] py-10;
 }
 button, button[type=submit] {
     @apply bg-yellow-900 hover:bg-yellow-700 text-white font-bold py-2 px-4 rounded;
 }
 
 input {
-    @apply border-2 border-yellow-900 h-8 rounded;
+    @apply border-2 border-yellow-900 h-8 px-1 rounded;
+}
+
+.register-input {
+    @apply flex flex-col justify-end gap-1;
 }

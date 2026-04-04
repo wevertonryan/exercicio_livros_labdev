@@ -2,9 +2,13 @@ import { useNavigate } from 'react-router-dom';
 import { getAllBooks } from '../api/api.jsx';
 import BookListCard from '../components/bookListCard.jsx';
 import { useQuery } from '@tanstack/react-query';
+import CookieQuery from '../api/cookieQuerys.js';
+
+
+
 
 export default function ListBooks(){
-    const { data, isLoading, isError, error } = useQuery({
+    const { data, isLoading, isError, error, refetch } = useQuery({
         queryKey: ['allBooksJson'],
         queryFn: async ()=> {
             const result = await getAllBooks();
@@ -14,6 +18,13 @@ export default function ListBooks(){
         retry: 3,                 // Se falhar, tenta 3 vezes antes de desistir
         refetchOnWindowFocus: false // Para de atualizar toda vez que você clica na aba do Chrome
     })
+
+    if(CookieQuery.getCookie("newDocument") == "true"){
+        console.log("Tem Documento novo");
+        refetch();
+        CookieQuery.upsertCookie("newDocument", "false");
+    } 
+    
 
     const navigate = useNavigate();
 
@@ -27,8 +38,8 @@ export default function ListBooks(){
         return <BookListCard book={book}/>
     })
 
-    
-    
+    //console.log(document.cookie)
+
     return(
         <>
             <div className='flex flex-wrap justify-between gap-4'>

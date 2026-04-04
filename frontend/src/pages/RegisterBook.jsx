@@ -1,17 +1,7 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { createBook } from '../api/api.jsx';
-
-function RegisterBookInput({name, normalizedName, inputType, colSpan=3, handleFunc, onFather="", onLabel="", onInput=""}){
-    
-    const style = "flex flex-col col-span-" + colSpan
-    return (
-        <div {...onFather} className={style}>
-            <label {...onLabel} htmlFor={normalizedName} >{name}</label> 
-            <input {...onInput} type={inputType} name={normalizedName} id={normalizedName} onChange={e => handleFunc(e.target.value)}/>
-        </div>
-    );
-}
+import CookieQuery from '../api/cookieQuerys.js';
 
 export default function RegisterBook(){
     const [titulo, setTitulo] = useState(null);
@@ -22,7 +12,6 @@ export default function RegisterBook(){
     const [saving, setSaving] = useState(false);
 
     const navigate = useNavigate();
-
     //const navigate:NavigateFunction = useNavigate();
 
     const handleSubmit = async (e)=>{
@@ -45,61 +34,47 @@ export default function RegisterBook(){
         setSaving(true);
         try {
             await createBook(json);
+            CookieQuery.upsertCookie("newDocument", "true");
             navigate(-1);
         } catch (error) {
-            console.log(error)
+            console.log(error);
         }
-        setSaving(false)
-        return
+        setSaving(false);
+        return;
     }
+
     return (
-        <form className="flex flex-col gap-4">
+        <form className="flex flex-col gap-6 sm:px-10">
         <div>
-            <h1>Cadastrar Livro</h1><p>{saving ? "Salvando" : ""}</p>
+            <h1 className="text-center sm:text-start">Cadastrar Livro</h1><p>{saving ? "Salvando" : ""}</p>
         </div>
-        <div className='grid grid-cols-3 sm:grid-cols-6 w-full gap-4'>
-            
+        <div className='grid grid-cols-6 w-full gap-3'>
+            <div className="register-input col-span-6 sm:col-span-3">
+                <label htmlFor="titulo" >Titulo</label> 
+                <input type="text" name="titulo" id="titulo" onChange={e => setTitulo(e.target.value)}/>
+            </div>
 
-            <RegisterBookInput 
-                name="Titulo" 
-                normalizedName="titulo" 
-                inputType="text" 
-                handleFunc={setTitulo}
-            />
+            <div className="register-input col-span-6 sm:col-span-3">
+                <label htmlFor="autor" >Autor</label> 
+                <input type="text" name="autor" id="autor" onChange={e => setAutor(e.target.value)}/>
+            </div>
 
-            <RegisterBookInput 
-                name="Autor" 
-                normalizedName="autor" 
-                inputType="text" 
-                handleFunc={setAutor} 
-            />
+            <div className="register-input col-span-6 sm:col-span-2">
+                <label htmlFor="isbn" >ISBN</label> 
+                <input type="text" name="isbn" id="isbn" onChange={e => setIsbn(e.target.value)}/>
+            </div>
 
-            <RegisterBookInput 
-                name="ISBN" 
-                normalizedName="isbn" 
-                inputType="text" 
-                handleFunc={setIsbn} 
-                colSpan="2"
-            />
+            <div className="register-input col-span-3 sm:col-span-2">
+                <label htmlFor="anoPublicacao">Ano de Publicacao</label> 
+                <input type="text" name="anoPublicacao" id="anoPublicacao" onChange={e => setAnoPublicacao(e.target.value)}/>
+            </div>
 
-            <RegisterBookInput 
-                name="Ano de Publicação" 
-                normalizedName="anoPublicacao" 
-                inputType="number" 
-                handleFunc={setAnoPublicacao} 
-                colSpan="2"
-            />
-
-            <RegisterBookInput 
-                name="Quantidade de Estoque" 
-                normalizedName="quantidadeEstoque" 
-                inputType="number" 
-                handleFunc={setQuantidadeEstoque} 
-                colSpan="2"
-            />
-
+            <div className="register-input col-span-3 sm:col-span-2">
+                <label htmlFor="quantidadeEstoque" >Quantidade de Estoque</label> 
+                <input type="text" name="quantidadeEstoque" id="quantidadeEstoque" onChange={e => setQuantidadeEstoque(e.target.value)}/>
+            </div>
         </div>
-        <button className="col-span-3 self-end" type="submit" onClick={handleSubmit}>Cadastrar Livro</button>
+        <button className="sm:self-end" type="submit" onClick={handleSubmit}>Cadastrar Livro</button>
         </form>
     )
 }
