@@ -14,7 +14,6 @@ export default function RegisterBook(){
     const navigate = useNavigate();
     //const navigate:NavigateFunction = useNavigate();
 
-
     const savingBook = (book) => new Promise((resolve, reject)=>{
         createBook(book)
         .then(()=>{
