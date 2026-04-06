@@ -6,8 +6,7 @@ export default function PopUpAddBookOnStock({id, titulo, setIsPopUpAddOnStockVis
     const [quantidade, setQuantidade] = useState(0)
 
     const addingOnStock = ()=>{return new Promise((resolve, reject) =>{
-        const payload = JSON.stringify({quant: quantidade})
-        addBookOnStock(id, payload)
+        addBookOnStock(id, quantidade)
         .then(result => {
             setIsPopUpAddOnStockVisible(false);
             refetch()
@@ -17,7 +16,6 @@ export default function PopUpAddBookOnStock({id, titulo, setIsPopUpAddOnStockVis
         .catch(error => reject(error.message))
     })}
     const handleAddOnStock = () => {
-        console.log("2")
         if(quantidade < 1) {
             toast.warning("Valor precisa ser maior do que zero!");
             return;

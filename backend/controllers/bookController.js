@@ -1,11 +1,28 @@
 import Book from "../models/book.class.js";
 
 export async function findBooks(req, res){
-    const query = req.query;
+    
+
+    const { titulo, autor, isbn, ano_publicacao, page, sizePage } = req.query;
+    let query = {};
+    if(titulo) query.titulo = titulo;
+    if(autor) query.autor = autor;
+    if(isbn) query.isbn = isbn;
+    if(ano_publicacao) query.ano_publicacao = ano_publicacao;
+
+    let validPage = parseInt(page);
+    let validSizePage = parseInt(sizePage);
+
+    if(isNaN(page) || page < 0) page = 0;
+    if(isNaN(validPage) || validPage < 0) validSizePage = 10;
+
     try {
         const books = await Book.find(query)
-        .sort({titulo: 1});
-        res.status(200).json({message: "Requisição executada com sucesso!", status: "sucess", result: books});
+        .sort({titulo: 1})
+        .skip(validPage * validSizePage)
+        .limit(validSizePage);
+
+        res.status(200).json({message: "Requisição executada com sucesso!", status: "sucess", result: books, validPage, validSizePage, resultSize: books.length});
     } catch(error) {
         res.status(500).json({message: "Requisição falhou!", status: "failed", result: error});
     }
@@ -120,6 +137,7 @@ export async function createBook(req, res){
     if(!titulo) itensFaltantes.push("Titulo");
     if(!autor) itensFaltantes.push("Autor");
     if(!isbn) itensFaltantes.push("ISBN");
+
     if(itensFaltantes.length > 0) {
         const message = _montagemDeMensagem(itensFaltantes)
 
@@ -129,7 +147,7 @@ export async function createBook(req, res){
 
 
     let quantidade_estoque_valida = parseInt(quantidade_estoque);
-    if(isNaN(quantidade_estoque_valida)){
+    if(isNaN(quantidade_estoque_valida) || quantidade_estoque_valida < 0){
         quantidade_estoque_valida = 0;
     }
     if(await _isBookRegistered(isbn, quantidade_estoque_valida)){
@@ -137,11 +155,17 @@ export async function createBook(req, res){
         return;
     }
 
+    let ano_publicacao_valida = parseInt(ano_publicacao);
+    const anoAtual = new Date().getFullYear();
+    if(isNaN(ano_publicacao_valida) || ano_publicacao_valida < 0 || ano_publicacao_valida > anoAtual){
+        ano_publicacao_valida = undefined;
+    }
+
     const newBook = new Book({
         titulo,
         autor,
         isbn,
-        ano_publicacao,
+        ano_publicacao: ano_publicacao_valida,
         quantidade_estoque: quantidade_estoque_valida
     })
     try {

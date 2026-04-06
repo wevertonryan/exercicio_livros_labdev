@@ -11,7 +11,7 @@ export const findBooks = (parametros) => api.get("/find" + parametros);
 export const getBookByID = (id) => api.get("/get/" + id);
 export const getBooksByAutor = (autor) => api.get("/getByAutor/" + autor);
 export const getAllBooks = () => api.get("/getAll");
-export const addBookOnStock = (id, payload) => api.patch("/addOnStock/" + id, payload)
+export const addBookOnStock = (id, quant) => api.patch(`/addOnStock/${id}?quant=${quant}`);
 export const createBook = (payload) => api.post("/create", payload);
 export const updateBook = (id, payload) => api.put("/update/" + id, payload);
 export const deleteBook = (id) => api.delete("/delete/" + id);

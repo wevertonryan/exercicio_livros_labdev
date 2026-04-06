@@ -4,6 +4,26 @@ import { createBook } from '../api/api.jsx';
 import CookieQuery from '../api/cookieQuerys.js';
 import { toast } from 'react-toastify';
 
+function _montagemDeMensagem(itensFaltantes){
+    let message = itensFaltantes[0];
+
+    let i = 1;
+    while(i < itensFaltantes.length){
+        message += ", ";
+        message += itensFaltantes[i];
+        i += 1;
+    }
+
+
+    if(i > 1){
+        message += " são itens obrigatórios!";
+    } else {
+        message += " é um item obrigatório!";
+    }
+
+    return message;
+}
+
 export default function RegisterBook(){
     const [titulo, setTitulo] = useState(undefined);
     const [autor, setAutor] = useState(undefined);
@@ -18,7 +38,7 @@ export default function RegisterBook(){
         createBook(book)
         .then(()=>{
             CookieQuery.upsertCookie("newBook", "true");
-            navigate(-1);
+            navigate("/");
             resolve();
         })
         .catch(() => reject())
@@ -27,9 +47,31 @@ export default function RegisterBook(){
     const handleSubmit = async (e)=>{
         e.preventDefault()
         
-        console.log(titulo)
-        if(!titulo && !autor && !isbn){
-            toast.error("Titulo, Autor e ISBN são itens obrigatórios!");
+        const itensFaltantes = [];
+        if(!titulo) itensFaltantes.push("Titulo");
+        if(!autor) itensFaltantes.push("Autor");
+        if(!isbn) itensFaltantes.push("ISBN");
+
+        if(itensFaltantes.length > 0) {
+            const message = _montagemDeMensagem(itensFaltantes)
+            toast.error(message)
+            return;
+        }
+
+        if(anoPublicacao){
+            const anoAtual = new Date().getFullYear();
+            if(anoPublicacao < 0){
+                toast.error("Ano de Publicação não pode ser negativo!");
+                return;
+            }
+            if(anoPublicacao > anoAtual){
+                toast.error("Ano de Publicação não pode ser maior que o ano atual!");
+                return;
+            }
+        }
+
+        if(quantidadeEstoque && quantidadeEstoque < 0){
+            toast.error("Quantidade de Estoque não pode ser negativa!");
             return;
         }
 

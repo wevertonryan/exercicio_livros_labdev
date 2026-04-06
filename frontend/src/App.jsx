@@ -1,6 +1,6 @@
 import { Routes, Route, useNavigate } from 'react-router-dom'
 import './App.css'
-import ListBooks from './pages/ListBooks.jsx'
+import HomeBooks from './pages/HomeBooks.jsx'
 import SearchBooks from './pages/SearchBooksByAutor.jsx'
 import RegisterBook from './pages/RegisterBook.jsx'
 
@@ -19,7 +19,7 @@ function App() {
       </header>
       <main>
       <Routes>
-          <Route path='/' element={<ListBooks />} />
+          <Route path='/' element={<HomeBooks />} />
           <Route path='/new' element={<RegisterBook />} />
           <Route path='/search' element={<SearchBooks />} />
       </Routes>
