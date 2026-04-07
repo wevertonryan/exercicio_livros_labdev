@@ -13,8 +13,8 @@ export async function findBooks(req, res){
     let validPage = parseInt(page);
     let validSizePage = parseInt(sizePage);
 
-    if(isNaN(page) || page < 0) page = 0;
-    if(isNaN(validPage) || validPage < 0) validSizePage = 10;
+    if(isNaN(validPage) || validPage < 0) validPage = 0;
+    if(isNaN(validSizePage) || validSizePage < 0) validSizePage = 10;
 
     try {
         const books = await Book.find(query)
@@ -22,7 +22,7 @@ export async function findBooks(req, res){
         .skip(validPage * validSizePage)
         .limit(validSizePage);
 
-        res.status(200).json({message: "Requisição executada com sucesso!", status: "sucess", result: books, validPage, validSizePage, resultSize: books.length});
+        res.status(200).json({message: "Requisição executada com sucesso!", status: "sucess", result: books, page: validPage, sizePage: validSizePage, resultSize: books.length});
     } catch(error) {
         res.status(500).json({message: "Requisição falhou!", status: "failed", result: error});
     }

@@ -16,10 +16,12 @@ export default function ListBooks({data, refetch}){
         setIsPopUpAddOnStockVisible(true);
     }
     
-    const allBooksJSX = data.map((book) => {
-        return <BookListCard book={book} handleAddOnStock={handleAddOnStock}/>
-    })
-
+    let allBooksJSX = <p>Nem um livro encontrado!</p>;
+    if(data.length > 0){
+        allBooksJSX = data.map((book) => {
+            return <BookListCard book={book} handleAddOnStock={handleAddOnStock}/>
+        });
+    }
     return(
         <>
             <div className='w-full flex gap-2 pb-8'>
