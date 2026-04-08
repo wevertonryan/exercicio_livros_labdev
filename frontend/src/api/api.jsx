@@ -9,9 +9,9 @@ const api = axios.create({
 
 export const findBooks = (parametros) => api.get("/find" + parametros);
 export const getBookByID = (id) => api.get("/get/" + id);
-export const getBooksByAutor = (autor) => api.get("/getByAutor/" + autor);
-export const getAllBooks = () => api.get("/getAll");
-export const addBookOnStock = (id, quant) => api.patch(`/addOnStock/${id}?quant=${quant}`);
+export const getBooksByAutor = (autor, page = 1) => api.get(`/getByAutor/${autor}?page=${page}`);
+export const getAllBooks = (page = 1) => api.get(`/getAll?page=${page}`);
+export const addBookOnStock = (id, quant = 1) => api.patch(`/addOnStock/${id}?quant=${quant}`);
 export const createBook = (payload) => api.post("/create", payload);
 export const updateBook = (id, payload) => api.put("/update/" + id, payload);
 export const deleteBook = (id) => api.delete("/delete/" + id);

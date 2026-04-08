@@ -37,7 +37,9 @@ export default function RegisterBook(){
     const savingBook = (book) => new Promise((resolve, reject)=>{
         createBook(book)
         .then(()=>{
-            CookieQuery.upsertCookie("newBook", "true");
+            let newBook = parseInt(CookieQuery.getCookie("newBook"));
+            if(isNaN(newBook)) newBook = 0;
+            CookieQuery.upsertCookie("newBook", newBook + 1);
             navigate("/");
             resolve();
         })

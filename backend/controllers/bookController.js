@@ -1,29 +1,55 @@
 import Book from "../models/book.class.js";
 
-export async function findBooks(req, res){
-    
+async function _paginacao(req, query = {}){
+    const reqPage = req.page;
+    const reqSizePage = req.sizePage;
 
-    const { titulo, autor, isbn, ano_publicacao, page, sizePage } = req.query;
+    let page = parseInt(reqPage) - 1;
+    let sizePage = parseInt(reqSizePage);
+
+    if(isNaN(page) || page < 0) page = 0;
+    if(isNaN(sizePage) || sizePage < 0) sizePage = 10;
+
+    let invalid = true;
+    try {
+        const total = await Book.countDocuments(query);
+        const totalPages = Math.floor(total / sizePage) + 1;
+
+        invalid = false;
+        if(page + 1 > totalPages) {
+            page = totalPages - 1
+        }
+        return { page, totalPages, sizePage, totalBooks: total, invalid }
+    } catch(error) {
+        console.log(error)
+    }
+    return { invalid }
+}
+
+export async function findBooks(req, res){
+    const { titulo, autor, isbn, ano_publicacao } = req.query;
     let query = {};
     if(titulo) query.titulo = titulo;
     if(autor) query.autor = autor;
     if(isbn) query.isbn = isbn;
     if(ano_publicacao) query.ano_publicacao = ano_publicacao;
 
-    let validPage = parseInt(page);
-    let validSizePage = parseInt(sizePage);
-
-    if(isNaN(validPage) || validPage < 0) validPage = 0;
-    if(isNaN(validSizePage) || validSizePage < 0) validSizePage = 10;
-
     try {
+        const {page, totalPages, sizePage, totalBooks, invalid} = await _paginacao(req.query, query);
+
+        if(invalid){
+            res.status(422).json({message: "Essa página não existe", status: "failed", page: page + 1, totalPages, sizePage, totalBooks});
+            return;
+        }
+
         const books = await Book.find(query)
         .sort({titulo: 1})
-        .skip(validPage * validSizePage)
-        .limit(validSizePage);
+        .skip(page * sizePage)
+        .limit(sizePage);
 
-        res.status(200).json({message: "Requisição executada com sucesso!", status: "sucess", result: books, page: validPage, sizePage: validSizePage, resultSize: books.length});
+        res.status(200).json({message: "Requisição executada com sucesso!", status: "sucess", result: books, page: page + 1, totalPages, sizePage, resultSize: books.length, totalBooks});
     } catch(error) {
+        console.log(error)
         res.status(500).json({message: "Requisição falhou!", status: "failed", result: error});
     }
 }
@@ -33,6 +59,7 @@ export async function getBookByID(req, res){
 
     try {
         const book = await Book.findById(bookID)
+        
         res.status(200).json({message: "Requisição executada com sucesso!", status: "sucess", result: book});
     } catch(error) {
         res.status(500).json({message: "Requisição falhou!", status: "failed", result: error});
@@ -41,9 +68,21 @@ export async function getBookByID(req, res){
 
 export async function getBooksByAutor(req, res){
     const autor = req.params.autor;
+    const query = {autor: autor};
     try {
-        const books = await Book.find({autor: autor})
-        res.status(200).json({message: "Requisição executada com sucesso!", status: "sucess", result: books});
+        const {page, totalPages, sizePage, totalBooks, invalid} = await _paginacao(req.query, query);
+
+        if(invalid){
+            res.status(422).json({message: "Essa página não existe", status: "failed", page: page + 1, totalPages, sizePage, totalBooks});
+            return;
+        }
+
+        const books = await Book.find(query)
+        .sort({titulo: 1})
+        .skip(page * sizePage)
+        .limit(sizePage);
+
+        res.status(200).json({message: "Requisição executada com sucesso!", status: "sucess", result: books, page: page + 1, totalPages, sizePage, resultSize: books.length, totalBooks});
     } catch(error) {
         res.status(500).json({message: "Requisição falhou!", status: "failed", result: error});
     }
@@ -51,8 +90,19 @@ export async function getBooksByAutor(req, res){
 
 export async function getAllBooks(req, res){
     try {
-        const books = await Book.find();
-        res.status(200).json({message: "Requisição executada com sucesso!", status: "sucess", result: books});
+        const {page, totalPages, sizePage, totalBooks, invalid} = await _paginacao(req.query);
+
+        if(invalid){
+            res.status(422).json({message: "Essa página não existe", status: "failed", page: page + 1, totalPages, sizePage, totalBooks});
+            return;
+        }
+
+        const books = await Book.find()
+        .sort({titulo: 1})
+        .skip(page * sizePage)
+        .limit(sizePage);
+
+        res.status(200).json({message: "Requisição executada com sucesso!", status: "sucess", result: books, page: page + 1, totalPages, sizePage, resultSize: books.length, totalBooks});
     } catch(error) {
         res.status(500).json({message: "Requisição falhou!", status: "failed", result: error});
     }

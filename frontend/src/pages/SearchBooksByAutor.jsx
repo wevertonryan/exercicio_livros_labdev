@@ -5,17 +5,27 @@ import { toast } from 'react-toastify';
 import ListBooks from './ListBooks.jsx';
 
 export default function SearchBooks(){
+    const [page, setPage] = useState(1);
+    const [totalPages, setTotalPages] = useState(1);
+
     const urlParams = new URLSearchParams(window.location.search);
     const [data, setData] = useState(undefined);
     const [isLoading, setIsLoading] = useState(true);
     const [isError, setIsError] = useState(false);
     const [error, setError] = useState("");
 
+    const urlAutor = urlParams.get("autor");
+    const urlPage = urlParams.get("page") || 1;
+
     useEffect(()=>{
         const searchingData = new Promise((resolve, reject)=>{
-            getBooksByAutor(urlParams.get("autor"))
+            getBooksByAutor(urlAutor, urlPage)
             .then(result => {
                 setIsLoading(false);
+
+                setPage(result.data.page);
+                setTotalPages(result.data.totalPages);
+                
                 setData(result.data.result);
                 resolve(result.data.result);
             })
@@ -34,5 +44,5 @@ export default function SearchBooks(){
     if (isLoading) return 'Procurando Livros...';
     if (isError) return error ;
     
-    return <ListBooks data={data} refetch={()=>{}}/>
+    return <ListBooks data={data} page={page} totalPages={totalPages} refetch={()=>{}}/>
 }
